@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +8,6 @@
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
-      background-color: white;
-      color: black;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    body.dark-mode {
-      background-color: #121212;
-      color: #ffffff;
     }
     .phone-number {
       border: 1px solid #ccc;
@@ -28,6 +21,11 @@
     .phone-number.green {
       background-color: #d4edda;
       border-color: #c3e6cb;
+    }
+    .phone-number.dark-green {
+      background-color: #155724;
+      border-color: #1e7e34;
+      color: white;
     }
     .phone-links a {
       margin-left: 10px;
@@ -49,10 +47,6 @@
     button:hover {
       background-color: #0056b3;
     }
-    button.dark {
-      background-color: #444;
-      color: white;
-    }
     #config-section {
       margin-bottom: 20px;
     }
@@ -60,24 +54,9 @@
       margin-top: 10px;
       font-weight: bold;
     }
-    #dark-mode-toggle {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    #dark-mode-toggle.dark {
-      background-color: #444;
-    }
   </style>
 </head>
 <body>
-  <button id="dark-mode-toggle">Тёмный режим</button>
   <h1>Генератор номеров телефонов</h1>
 
   <div id="config-section">
@@ -93,6 +72,7 @@
 
   <div id="numbers" style="display: none;"></div>
   <button id="generate-btn" style="display: none;">Сгенерировать ещё 100 номеров</button>
+  <button id="reset-btn" style="display: none;">Сбросить цвета</button>
 
   <script>
     const generatedNumbers = new Set();
@@ -123,7 +103,7 @@
       for (let i = 0; i < 100; i++) {
         let phoneNumber;
         do {
-          phoneNumber = cityCode + generateRandomNumber(numberLength - cityCode.length);   
+          phoneNumber = cityCode + generateRandomNumber(numberLength - cityCode.length);
         } while (generatedNumbers.has(phoneNumber));
 
         generatedNumbers.add(phoneNumber);
@@ -133,13 +113,22 @@
         phoneDiv.innerHTML = `
           <span>${phoneIndex}. ${countryCode} ${phoneNumber}</span>
           <div class="phone-links">
-            <a href="https://t.me/${countryCode}${phoneNumber}" target="_blank"><img src="https://free-png.ru/wp-content/uploads/2023/06/free-png.ru-30-370x370.png" alt="телеграмм" width="50px" height="50px"></a>
-            <a href="https://wa.me/${countryCode}${phoneNumber}" target="_blank"><img src="https://gas-kvas.com/grafic/uploads/posts/2024-01/gas-kvas-com-p-znachok-vatsap-dlya-vizitki-na-prozrachnom-11.png" alt="телеграмм" width="50px" height="50px"></a>
+            <a href="https://t.me/${countryCode}${phoneNumber}" target="_blank">Telegram</a>
+            <a href="https://wa.me/${countryCode}${phoneNumber}" target="_blank">WhatsApp</a>
           </div>
         `;
 
+        let clickCount = 0;
         phoneDiv.addEventListener('click', () => {
-          phoneDiv.classList.toggle('green');
+          clickCount++;
+          if (clickCount === 1) {
+            phoneDiv.classList.add('green');
+            phoneDiv.classList.remove('dark-green');
+          } else if (clickCount === 2) {
+            phoneDiv.classList.add('dark-green');
+            phoneDiv.classList.remove('green');
+            clickCount = 0; // Reset click count after second click
+          }
         });
 
         numbersContainer.appendChild(phoneDiv);
@@ -155,20 +144,21 @@
       document.getElementById('config-section').style.display = 'none';
       document.getElementById('numbers').style.display = 'block';
       document.getElementById('generate-btn').style.display = 'inline-block';
+      document.getElementById('reset-btn').style.display = 'inline-block';
       generatePhoneNumbers();
     });
 
     document.getElementById('generate-btn').addEventListener('click', generatePhoneNumbers);
 
-    // Dark mode toggle
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    darkModeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      darkModeToggle.classList.toggle('dark');
-      darkModeToggle.textContent = document.body.classList.contains('dark-mode') 
-        ? 'Светлый режим' 
-        : 'Тёмный режим';
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      const phoneNumbers = document.querySelectorAll('.phone-number');
+      phoneNumbers.forEach(phoneDiv => {
+        phoneDiv.classList.remove('green', 'dark-green');
+      });
     });
   </script>
+</body>
+</html>
+
 </body>
 </html>
