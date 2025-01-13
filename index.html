@@ -20,7 +20,7 @@
     }
 
     .phone-number {
-      border: 1px solid #ccc;
+      border: 2px solid #ccc;
       padding: 10px;
       margin: 5px 0;
       display: flex;
@@ -29,7 +29,7 @@
       cursor: pointer;
       background-color: #fff;
       color: #000;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s, border-color 0.3s;
     }
 
     body.dark-mode .phone-number {
@@ -43,8 +43,8 @@
     }
 
     .phone-number.dark-green {
-      background-color: #155724;
-      border-color: #1e7e34;
+      background-color: #065c1a;
+      border-color: #02dd35;
       color: white;
     }
 
@@ -85,7 +85,9 @@
     }
 
     .theme-switcher {
-      margin-bottom: 20px;
+      position: absolute;
+      top: 20px;
+      right: 20px;
     }
   </style>
 </head>
