@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Генератор номеров</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .phone-number {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 5px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .phone-number.green {
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+    }
+    .phone-links a {
+      margin-left: 10px;
+      text-decoration: none;
+      color: #007bff;
+    }
+    .phone-links a:hover {
+      text-decoration: underline;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #config-section {
+      margin-bottom: 20px;
+    }
+    #example-number {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Генератор номеров телефонов</h1>
+
+  <div id="config-section">
+    <label for="country-code">Код страны:</label>
+    <input type="text" id="country-code" value="+996">
+    <label for="city-code">Код города:</label>
+    <input type="text" id="city-code" placeholder="Введите код города">
+    <label for="number-length">Длина номера:</label>
+    <input type="number" id="number-length" min="7" max="10" value="7">
+    <div id="example-number">Пример: +9961234567</div>
+    <button id="start-btn">Начать</button>
+  </div>
+
+  <div id="numbers" style="display: none;"></div>
+  <button id="generate-btn" style="display: none;">Сгенерировать ещё 100 номеров</button>
+
+  <script>
+    const generatedNumbers = new Set();
+    let phoneIndex = 1;
+
+    function generateRandomNumber(length) {
+      let number = '';
+      for (let i = 0; i < length; i++) {
+        number += Math.floor(Math.random() * 10);
+      }
+      return number;
+    }
+
+    function updateExampleNumber() {
+      const countryCode = document.getElementById('country-code').value;
+      const cityCode = document.getElementById('city-code').value;
+      const numberLength = document.getElementById('number-length').value;
+      const example = `${countryCode}${cityCode}${'X'.repeat(numberLength - cityCode.length)}`;
+      document.getElementById('example-number').textContent = `Пример: ${example}`;
+    }
+
+    function generatePhoneNumbers() {
+      const countryCode = document.getElementById('country-code').value;
+      const cityCode = document.getElementById('city-code').value;
+      const numberLength = document.getElementById('number-length').value;
+      const numbersContainer = document.getElementById('numbers');
+
+      for (let i = 0; i < 100; i++) {
+        let phoneNumber;
+        do {
+          phoneNumber = cityCode + generateRandomNumber(numberLength - cityCode.length);
+        } while (generatedNumbers.has(phoneNumber));
+
+        generatedNumbers.add(phoneNumber);
+        
+        const phoneDiv = document.createElement('div');
+        phoneDiv.className = 'phone-number';
+        phoneDiv.innerHTML = `
+          <span>${phoneIndex}. ${countryCode} ${phoneNumber}</span>
+          <div class="phone-links">
+            <a href="https://t.me/${countryCode}${phoneNumber}" target="_blank">Telegram</a>
+            <a href="https://wa.me/${countryCode}${phoneNumber}" target="_blank">WhatsApp</a>
+          </div>
+        `;
+
+        phoneDiv.addEventListener('click', () => {
+          phoneDiv.classList.toggle('green');
+        });
+
+        numbersContainer.appendChild(phoneDiv);
+        phoneIndex++;
+      }
+    }
+
+    document.getElementById('number-length').addEventListener('input', updateExampleNumber);
+    document.getElementById('country-code').addEventListener('input', updateExampleNumber);
+    document.getElementById('city-code').addEventListener('input', updateExampleNumber);
+
+    document.getElementById('start-btn').addEventListener('click', () => {
+      document.getElementById('config-section').style.display = 'none';
+      document.getElementById('numbers').style.display = 'block';
+      document.getElementById('generate-btn').style.display = 'inline-block';
+      generatePhoneNumbers();
+    });
+
+    document.getElementById('generate-btn').addEventListener('click', generatePhoneNumbers);
+  </script>
+</body>
+</html>
