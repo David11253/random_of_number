@@ -8,6 +8,13 @@
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
+      background-color: white;
+      color: black;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    body.dark-mode {
+      background-color: #121212;
+      color: #ffffff;
     }
     .phone-number {
       border: 1px solid #ccc;
@@ -42,6 +49,10 @@
     button:hover {
       background-color: #0056b3;
     }
+    button.dark {
+      background-color: #444;
+      color: white;
+    }
     #config-section {
       margin-bottom: 20px;
     }
@@ -49,9 +60,24 @@
       margin-top: 10px;
       font-weight: bold;
     }
+    #dark-mode-toggle {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #dark-mode-toggle.dark {
+      background-color: #444;
+    }
   </style>
 </head>
 <body>
+  <button id="dark-mode-toggle">Тёмный режим</button>
   <h1>Генератор номеров телефонов</h1>
 
   <div id="config-section">
@@ -97,7 +123,7 @@
       for (let i = 0; i < 100; i++) {
         let phoneNumber;
         do {
-          phoneNumber = cityCode + generateRandomNumber(numberLength - cityCode.length);
+          phoneNumber = cityCode + generateRandomNumber(numberLength - cityCode.length);   
         } while (generatedNumbers.has(phoneNumber));
 
         generatedNumbers.add(phoneNumber);
@@ -107,8 +133,8 @@
         phoneDiv.innerHTML = `
           <span>${phoneIndex}. ${countryCode} ${phoneNumber}</span>
           <div class="phone-links">
-            <a href="https://t.me/${countryCode}${phoneNumber}" target="_blank">Telegram</a>
-            <a href="https://wa.me/${countryCode}${phoneNumber}" target="_blank">WhatsApp</a>
+            <a href="https://t.me/${countryCode}${phoneNumber}" target="_blank"><img src="https://free-png.ru/wp-content/uploads/2023/06/free-png.ru-30-370x370.png" alt="телеграмм" width="50px" height="50px"></a>
+            <a href="https://wa.me/${countryCode}${phoneNumber}" target="_blank"><img src="https://gas-kvas.com/grafic/uploads/posts/2024-01/gas-kvas-com-p-znachok-vatsap-dlya-vizitki-na-prozrachnom-11.png" alt="телеграмм" width="50px" height="50px"></a>
           </div>
         `;
 
@@ -133,6 +159,16 @@
     });
 
     document.getElementById('generate-btn').addEventListener('click', generatePhoneNumbers);
+
+    // Dark mode toggle
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      darkModeToggle.classList.toggle('dark');
+      darkModeToggle.textContent = document.body.classList.contains('dark-mode') 
+        ? 'Светлый режим' 
+        : 'Тёмный режим';
+    });
   </script>
 </body>
 </html>
