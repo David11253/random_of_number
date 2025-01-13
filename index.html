@@ -4,11 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Генератор номеров</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
+      background-color: #f4f4f4;
+      color: #000;
+      transition: background-color 0.3s, color 0.3s;
     }
+
+    body.dark-mode {
+      background-color: #333;
+      color: #f4f4f4;
+    }
+
     .phone-number {
       border: 1px solid #ccc;
       padding: 10px;
@@ -17,24 +27,40 @@
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
+      background-color: #fff;
+      color: #000;
+      transition: background-color 0.3s;
     }
+
+    body.dark-mode .phone-number {
+      background-color: #444;
+      color: #f4f4f4;
+    }
+
     .phone-number.green {
       background-color: #d4edda;
       border-color: #c3e6cb;
     }
+
     .phone-number.dark-green {
       background-color: #155724;
       border-color: #1e7e34;
       color: white;
     }
+
     .phone-links a {
       margin-left: 10px;
       text-decoration: none;
-      color: #007bff;
     }
+
+    body.dark-mode .phone-links a {
+      color: #ffcc00;
+    }
+
     .phone-links a:hover {
       text-decoration: underline;
     }
+
     button {
       margin-top: 20px;
       padding: 10px 20px;
@@ -44,20 +70,32 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
     button:hover {
       background-color: #0056b3;
     }
+
     #config-section {
       margin-bottom: 20px;
     }
+
     #example-number {
       margin-top: 10px;
       font-weight: bold;
+    }
+
+    .theme-switcher {
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
   <h1>Генератор номеров телефонов</h1>
+
+  <div class="theme-switcher">
+    <label for="theme-toggle">Светлая/Темная тема:</label>
+    <input type="checkbox" id="theme-toggle">
+  </div>
 
   <div id="config-section">
     <label for="country-code">Код страны:</label>
@@ -72,11 +110,16 @@
 
   <div id="numbers" style="display: none;"></div>
   <button id="generate-btn" style="display: none;">Сгенерировать ещё 100 номеров</button>
-  <button id="reset-btn" style="display: none;">Сбросить цвета</button>
 
   <script>
     const generatedNumbers = new Set();
     let phoneIndex = 1;
+
+    // Смена темы
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.addEventListener('change', () => {
+      document.body.classList.toggle('dark-mode', themeToggle.checked);
+    });
 
     function generateRandomNumber(length) {
       let number = '';
@@ -113,8 +156,13 @@
         phoneDiv.innerHTML = `
           <span>${phoneIndex}. ${countryCode} ${phoneNumber}</span>
           <div class="phone-links">
-            <a href="https://t.me/${countryCode}${phoneNumber}" target="_blank">Telegram</a>
-            <a href="https://wa.me/${countryCode}${phoneNumber}" target="_blank">WhatsApp</a>
+            <a href="https://t.me/${countryCode}${phoneNumber}" target="_blank">
+              <img src="https://free-png.ru/wp-content/uploads/2023/06/free-png.ru-30-370x370.png" alt="Телеграмм" width="50px" height="50px">
+            </a>
+            <a href="https://wa.me/${countryCode}${phoneNumber}" target="_blank">
+              <img src="https://gas-kvas.com/grafic/uploads/posts/2024-01/gas-kvas-com-p-znachok-vatsap-dlya-vizitki-na-prozrachnom-11.png" alt="WhatsApp" width="50px" height="50px">
+            </a>
+            <button class="reset-color" style="margin-left: 10px;">Сбросить цвет</button>
           </div>
         `;
 
@@ -127,8 +175,15 @@
           } else if (clickCount === 2) {
             phoneDiv.classList.add('dark-green');
             phoneDiv.classList.remove('green');
-            clickCount = 0; // Reset click count after second click
+            clickCount = 0; // Сбрасываем после второго клика
           }
+        });
+
+        // Обработчик для сброса цвета
+        const resetBtn = phoneDiv.querySelector('.reset-color');
+        resetBtn.addEventListener('click', (e) => {
+          e.stopPropagation(); // Останавливаем всплытие события
+          phoneDiv.classList.remove('green', 'dark-green');
         });
 
         numbersContainer.appendChild(phoneDiv);
@@ -144,21 +199,10 @@
       document.getElementById('config-section').style.display = 'none';
       document.getElementById('numbers').style.display = 'block';
       document.getElementById('generate-btn').style.display = 'inline-block';
-      document.getElementById('reset-btn').style.display = 'inline-block';
       generatePhoneNumbers();
     });
 
     document.getElementById('generate-btn').addEventListener('click', generatePhoneNumbers);
-
-    document.getElementById('reset-btn').addEventListener('click', () => {
-      const phoneNumbers = document.querySelectorAll('.phone-number');
-      phoneNumbers.forEach(phoneDiv => {
-        phoneDiv.classList.remove('green', 'dark-green');
-      });
-    });
   </script>
-</body>
-</html>
-
 </body>
 </html>
